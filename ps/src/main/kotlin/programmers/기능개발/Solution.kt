@@ -1,54 +1,56 @@
 package programmers.기능개발
 
-import java.util.concurrent.LinkedBlockingDeque
+import java.util.*
 import kotlin.math.ceil
 
 class Solution {
-    var answer = mutableListOf<Int>()
+    val jobs = LinkedList<Job>()
+
     fun solution(
         progresses: IntArray,
         speeds: IntArray
     ): IntArray {
-        val functions = LinkedBlockingDeque<Function>()
-        progresses.indices.forEach { index ->
-            functions.add(Function(progresses[index], speeds[index]))
+        val answer = ArrayList<Int>()
+        for (idx in progresses.indices) {
+            jobs.add(Job(progresses[idx], speeds[idx]))
         }
 
-        while (functions.isNotEmpty()) {
-            for (function in functions) {
-                function.progress += function.speed
-            }
-            val function = functions.peekFirst()
-            while (functions.isNotEmpty()) {
-                var count = 0
-                if (function.progress >= 100) {
-                    functions.pollFirst()
+        var time = 0
+        while (jobs.isNotEmpty()) {
+            var count = 0
+            while (isWorking()) {
+                time++
+
+                // 한 번의 배포
+                while (jobs.isNotEmpty() && isDoneAfterTime(time)) {
+                    jobs.poll()
                     count++
-                    if (functions.isNotEmpty()) {
-                        for (next in functions) {
-                            if (functions.peekFirst().progress >= 100) {
-                                functions.pollFirst()
-                                count++
-                            }
-                            if (functions.isEmpty()) {
-                                break
-                            }
-                        }
-                    }
-                    if (count > 0)
-                        answer.add(count)
                 }
-                break
+                if (count != 0) {
+                    answer.add(count)
+                    break
+                }
             }
         }
         return answer.toIntArray()
     }
+
+    private fun isDoneAfterTime(time: Int) = jobs.peek().work + jobs.peek().speed * time >= 100
+
+    private fun isWorking() = jobs.peek().work < 100
 }
 
-data class Function(
-    var progress: Int,
-    var speed: Int
+data class Job(
+    var work: Int,
+    val speed: Int
 )
+
+fun main() {
+    val progresses = intArrayOf(93, 30, 55)
+    val speeds = intArrayOf(1, 30, 5)
+    val solution = Solution()
+    solution.solution(progresses, speeds).forEach { println(it) }
+}
 
 class Solution2 {
     fun solution(
