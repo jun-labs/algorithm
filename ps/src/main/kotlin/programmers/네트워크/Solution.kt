@@ -9,8 +9,8 @@ class Solution {
         computers: Array<IntArray>
     ): Int {
         var answer = 0
-        this.computers = computers
         visited = Array(n) { false }
+        this.computers = computers
 
         for (node in 0 until n) {
             if (!visited!![node]) {
@@ -22,11 +22,11 @@ class Solution {
         return answer
     }
 
-    private fun dfs(node: Int) {
-        for (column in 0 until computers!![node].size) {
-            if (!visited!![column] && computers!![node][column] > 0) {
-                visited!![column] = true
-                dfs(column)
+    private fun dfs(visitedNode: Int) {
+        for (node in 0 until visited!!.size) {
+            if (!visited!![node] && computers!![visitedNode][node] > 0) {
+                visited!![node] = true
+                dfs(node)
             }
         }
     }
