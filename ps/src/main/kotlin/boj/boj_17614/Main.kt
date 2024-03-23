@@ -11,10 +11,17 @@ fun main() {
 
 fun count369(number: Int): Int {
     var count = 0
-    number.toString().forEach { char ->
-        if (char == '3' || char == '6' || char == '9') {
+    var temp = number
+    while (temp > 0) {
+        val remain = temp % 10
+        if (remain == 3) {
+            count++
+        } else if (remain == 6) {
+            count++
+        } else if (remain == 9) {
             count++
         }
+        temp /= 10
     }
     return count
 }
