@@ -12,8 +12,8 @@ public class Solution {
         int K
     ) {
         int turn = 0;
-        for (Integer food : scoville) {
-            foods.add(food.longValue());
+        for (Integer value : scoville) {
+            foods.add(value.longValue());
         }
 
         while (!foods.isEmpty() && foods.peek() < K) {
@@ -21,10 +21,10 @@ public class Solution {
                 return -1;
             }
 
-            long first = foods.poll();
-            long second = foods.poll();
-            long mixed = first + (second * 2);
-            foods.offer(mixed);
+            long firstFood = foods.poll();
+            long secondFood = foods.poll();
+            long result = firstFood + (2 * secondFood);
+            foods.add(result);
             turn++;
         }
         return turn;
