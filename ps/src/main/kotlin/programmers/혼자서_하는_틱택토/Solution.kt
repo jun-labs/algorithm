@@ -33,8 +33,8 @@ class Solution {
 
     private fun playGame(symbol: Char): Boolean {
         for (idx in 0 until 3) {
-            val rowCheck = checkColumns(idx, symbol)
-            val columnCheck = checkRows(idx, symbol)
+            val rowCheck = checkRows(idx, symbol)
+            val columnCheck = checkColumns(idx, symbol)
             if (rowCheck || columnCheck) {
                 return true
             }
