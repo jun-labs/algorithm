@@ -8,57 +8,59 @@ class Solution {
     private val map: Array<Array<Char>> = Array(SIZE) { Array(SIZE) { '.' } }
 
     fun solution(board: Array<String>): Int {
-        var countO = 0
-        var countX = 0
+        var o = 0
+        var x = 0
 
-        for (x in 0 until 3) {
-            for (y in 0 until 3) {
-                map[x][y] = board[x][y]
-                if (map[x][y] == 'O') {
-                    countO++
-                } else if (map[x][y] == 'X') {
-                    countX++
+        for (row in board.indices) {
+            for (column in 0 until board[0].length) {
+                map[row][column] = board[row][column]
+                if (map[row][column] == 'O') {
+                    o++
+                } else if (map[row][column] == 'X') {
+                    x++
                 }
             }
         }
 
-        val winO = isWin('O')
-        val winX = isWin('X')
+        val resultO = playGame('O')
+        val resultX = playGame('X')
 
-        if (winO && winX) return 0
-        if (winO) return if (countO == countX + 1) 1 else 0
-        if (winX) return if (countO == countX) 1 else 0
-        return if ((countO == countX) || (countO == countX + 1)) 1 else 0
+        if (resultO && resultX) return 0
+        if (resultO) return if (o == x + 1) 1 else 0
+        if (resultX) return if (o == x) 1 else 0
+        return if ((o == x) || (o == x + 1)) 1 else 0
     }
 
-    private fun isWin(
-        symbol: Char
-    ): Boolean {
-        for (idx in 0 until SIZE) {
-            if (checkRow(idx, symbol) || checkColumn(idx, symbol)) {
+    private fun playGame(symbol: Char): Boolean {
+        for (idx in 0 until 3) {
+            val rowCheck = checkColumns(idx, symbol)
+            val columnCheck = checkRows(idx, symbol)
+            if (rowCheck || columnCheck) {
                 return true
             }
         }
         return checkDiagonal(symbol)
     }
 
-    private fun checkRow(
-        column: Int,
-        symbol: Char
-    ): Boolean {
-        for (row in 0 until SIZE) {
-            if (map[row][column] != symbol) {
-                return false
+    private fun checkDiagonal(symbol: Char): Boolean {
+        var leftDownDiagonal = true
+        var rightDownDiagonal = true
+        for (idx in 0 until 3) {
+            if (map[idx][idx] != symbol) {
+                rightDownDiagonal = false
+            }
+            if (map[idx][3 - idx - 1] != symbol) {
+                leftDownDiagonal = false
             }
         }
-        return true
+        return leftDownDiagonal || rightDownDiagonal
     }
 
-    private fun checkColumn(
+    private fun checkColumns(
         row: Int,
         symbol: Char
     ): Boolean {
-        for (column in 0 until SIZE) {
+        for (column in 0 until 3) {
             if (map[row][column] != symbol) {
                 return false
             }
@@ -66,17 +68,15 @@ class Solution {
         return true
     }
 
-    private fun checkDiagonal(symbol: Char): Boolean {
-        var diagonalA = true
-        var diagonalB = true
-        for (idx in 0 until SIZE) {
-            if (map[idx][idx] != symbol) {
-                diagonalA = false
-            }
-            if (map[idx][SIZE - idx - 1] != symbol) {
-                diagonalB = false
+    private fun checkRows(
+        column: Int,
+        symbol: Char
+    ): Boolean {
+        for (row in 0 until 3) {
+            if (map[row][column] != symbol) {
+                return false
             }
         }
-        return diagonalA || diagonalB
+        return true
     }
 }
