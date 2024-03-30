@@ -14,11 +14,11 @@ public class Solution {
         int start = 0;
         int end = people.length - 1;
         while (start <= end) {
-            answer++;
             if (people[start] + people[end] <= limit) {
                 start++;
             }
             end--;
+            answer++;
         }
         return answer;
     }
