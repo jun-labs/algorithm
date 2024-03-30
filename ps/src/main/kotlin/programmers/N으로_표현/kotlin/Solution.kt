@@ -1,4 +1,4 @@
-package programmers.N으로_표현.kt
+package programmers.N으로_표현.kotlin
 
 class Solution {
     fun solution(
@@ -8,8 +8,8 @@ class Solution {
         if (N == number) {
             return 1
         }
-        val dp = Array<MutableSet<Int>>(9) { mutableSetOf() }
 
+        val dp = Array<MutableSet<Int>>(9) { mutableSetOf() }
         for (idx in 1 until 9) {
             dp[idx].add("$N".repeat(idx).toInt())
             for (otherIdx in 1 until idx) {
@@ -25,11 +25,18 @@ class Solution {
                 }
             }
             for (target in dp[idx]) {
-                if (target == number) {
+                if (number == target) {
                     return idx
                 }
             }
         }
         return -1
     }
+}
+
+fun main() {
+    val N = 5
+    val number = 12
+    val solution = Solution()
+    solution.solution(N, number)
 }
