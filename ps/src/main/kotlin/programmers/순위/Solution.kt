@@ -5,7 +5,6 @@ class Solution {
         n: Int,
         results: Array<IntArray>
     ): Int {
-
         val win = Array(n + 1) { BooleanArray(n + 1) }
         val lose = Array(n + 1) { BooleanArray(n + 1) }
 
@@ -15,6 +14,7 @@ class Solution {
             win[winner][loser] = true
             lose[loser][winner] = true
         }
+
         for (x in 1..n) {
             for (y in 1..n) {
                 for (z in 1..n) {
