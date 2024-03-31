@@ -9,19 +9,21 @@ class Solution {
         var answer: Long = 0
 
         var start: Long = 0
-        var end: Long = n.toLong() * times.last()
+        var end: Long = n * times.last().toLong()
         var mid: Long
+
         while (start <= end) {
-            val mid: Long = (start + end) / 2
-            val count: Long = times.fold(0L) { total, time ->
-                total + (mid / time)
+            mid = (start + end) / 2
+
+            val totalCount = times.fold(0L) { count, time ->
+                count + (mid / time)
             }
 
-            if (count < n) {
+            if (totalCount < n) {
                 start = mid + 1
             } else {
-                answer = minOf(answer, mid)
                 end = mid - 1
+                answer = mid
             }
         }
         return answer
