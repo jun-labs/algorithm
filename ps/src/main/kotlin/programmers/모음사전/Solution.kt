@@ -7,26 +7,32 @@ class Solution {
     }
 
     fun solution(word: String): Int {
-        answers.clear()
-        for (length in 1..5) {
-            dfs(0, "", length)
+        for (wordCount in 1..letters.size) {
+            dfs(wordCount, "", 0)
         }
         answers.sort()
-        return answers.indexOf(word) + 1
+
+        var answer = 0
+        for (idx in 0 until answers.size) {
+            if (answers[idx] == word) {
+                answer = idx + 1
+                break
+            }
+        }
+        return answer
     }
 
     private fun dfs(
-        depth: Int,
-        word: String,
-        length: Int
+        targetCount: Int,
+        value: String,
+        count: Int
     ) {
-        if (depth == length) {
-            answers.add(word)
+        if (targetCount == count) {
+            answers.add(value)
             return
         }
-
-        for (letter in letters) {
-            dfs(depth + 1, word + letter, length)
+        for (idx in 0 until letters.size) {
+            dfs(targetCount, value + letters[idx], count + 1)
         }
     }
 }
@@ -34,5 +40,5 @@ class Solution {
 fun main() {
     val word = "AAAAE"
     val solution = Solution()
-    solution.solution(word)
+    println(solution.solution(word))
 }
