@@ -4,8 +4,8 @@ import java.util.Stack
 
 class Solution {
     fun solution(numbers: IntArray): IntArray {
+        val answer = IntArray(numbers.size) { -1 }
         val stack = Stack<Int>()
-        val answer = IntArray(numbers.size)
         stack.push(0)
 
         for (idx in 1 until numbers.size) {
@@ -15,7 +15,7 @@ class Solution {
             stack.push(idx)
         }
 
-        while (stack.isNotEmpty()) {
+        while(stack.isNotEmpty()){
             answer[stack.pop()] = -1
         }
         return answer
