@@ -1,8 +1,8 @@
 package programmers.네트워크
 
 class Solution {
-    private var visited: Array<Boolean>? = null
-    private var computers: Array<IntArray>? = null
+    private lateinit var visited: Array<Boolean>
+    private lateinit var computers: Array<IntArray>
 
     fun solution(
         n: Int,
@@ -13,8 +13,7 @@ class Solution {
         this.computers = computers
 
         for (node in 0 until n) {
-            if (!visited!![node]) {
-                visited!![node] = true
+            if (!visited[node]) {
                 dfs(node)
                 answer++
             }
@@ -22,12 +21,14 @@ class Solution {
         return answer
     }
 
-    private fun dfs(visitedNode: Int) {
-        for (node in 0 until visited!!.size) {
-            if (!visited!![node] && computers!![visitedNode][node] > 0) {
-                visited!![node] = true
-                dfs(node)
+    private fun dfs(node: Int) {
+        visited[node] = true
+        for (next in 0 until visited.size) {
+            if (!visited[next] && computers[node][next] > 0) {
+                visited[next] = true
+                dfs(next)
             }
         }
     }
 }
+
