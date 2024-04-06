@@ -1,19 +1,17 @@
 package programmers.하노이의_탑
 
 class Solution {
-    private lateinit var seq: MutableList<IntArray>
+    private val movements: MutableList<IntArray> = mutableListOf()
     fun solution(n: Int): Array<IntArray> {
-        seq = mutableListOf()
         hanoi(n, 1, 3, 2)
-        val answer = Array(seq.size) { IntArray(2) }
-
-        for (idx in 0 until seq.size) {
-            answer[idx] = seq[idx]
+        val answer = Array(movements.size) { IntArray(2) }
+        for (idx in answer.indices) {
+            answer[idx] = movements[idx]
         }
         return answer
     }
 
-    fun hanoi(
+    private fun hanoi(
         n: Int,
         from: Int,
         to: Int,
@@ -21,11 +19,11 @@ class Solution {
     ) {
         val movement = intArrayOf(from, to)
         if (n == 1) {
-            seq.add(movement)
-        } else {
-            hanoi(n - 1, from, via, to)
-            seq.add(movement)
-            hanoi(n - 1, via, to, from)
+            movements.add(movement)
+            return
         }
+        hanoi(n - 1, from, via, to)
+        movements.add(movement)
+        hanoi(n - 1, via, to, from)
     }
 }
