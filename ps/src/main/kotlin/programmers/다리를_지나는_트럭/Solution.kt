@@ -1,10 +1,11 @@
 package programmers.다리를_지나는_트럭
 
-import java.util.*
+import java.util.LinkedList
+import java.util.Queue
 
 class Solution {
     private val waitingTrucks: Queue<Truck> = LinkedList()
-    private val trucksOnRoad: MutableList<Truck> = ArrayList()
+    private val onRoadTrucks: MutableList<Truck> = ArrayList()
 
     fun solution(
         bridgeLength: Int,
@@ -12,27 +13,27 @@ class Solution {
         truckWeights: IntArray
     ): Int {
         var time = 0
-        var totalWeightOnRoadTrucks = 0
-        for ((id, truckWeight) in truckWeights.withIndex()) {
-            waitingTrucks.add(Truck(id, 0, truckWeight))
+        var totalWeight = 0
+        for ((idx, truckWeight) in truckWeights.withIndex()) {
+            waitingTrucks.add(Truck(idx, 0, truckWeight))
         }
 
-        while (waitingTrucks.isNotEmpty() || trucksOnRoad.isNotEmpty()) {
+        while (waitingTrucks.isNotEmpty() || onRoadTrucks.isNotEmpty()) {
             time++
-            val trucksCrossedBridge = mutableListOf<Truck>()
-            for (onRoadTruck in trucksOnRoad) {
-                onRoadTruck.time++
-                if (onRoadTruck.time >= bridgeLength) {
-                    trucksCrossedBridge.add(onRoadTruck)
-                    totalWeightOnRoadTrucks -= onRoadTruck.weight
+            val crossedTrucks = mutableListOf<Truck>()
+            for (truck in onRoadTrucks) {
+                truck.time++
+                if (truck.time >= bridgeLength) {
+                    crossedTrucks.add(truck)
+                    totalWeight -= truck.weight
                 }
             }
-            trucksOnRoad.removeAll(trucksCrossedBridge)
+            onRoadTrucks.removeAll(crossedTrucks)
 
-            if (canCrossBridge(weight, totalWeightOnRoadTrucks)) {
-                val truck = waitingTrucks.poll()
-                totalWeightOnRoadTrucks += truck.weight
-                trucksOnRoad.add(truck)
+            val nextTruck = waitingTrucks.peek()
+            if (canCrossBridge(weight, totalWeight)) {
+                onRoadTrucks.add(waitingTrucks.poll())
+                totalWeight += nextTruck.weight
             }
         }
         return time
