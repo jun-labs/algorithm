@@ -1,83 +1,92 @@
 package boj.boj_2468
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.LinkedList
-import java.util.Queue
 
-private val directions = arrayOf(intArrayOf(-1, 0), intArrayOf(1, 0), intArrayOf(0, -1), intArrayOf(0, 1))
-private var minHeight = 100
-private var maxHeight = 1
-private lateinit var heights: Array<IntArray>
+private val directions = arrayOf(
+    intArrayOf(-1, 0),
+    intArrayOf(1, 0),
+    intArrayOf(0, -1),
+    intArrayOf(0, 1)
+)
+
+private var minHeight = 100_000
+private var maxHeight = -100_000
+
+private var n: Int = 0
+private lateinit var map: Array<IntArray>
 private lateinit var visited: Array<BooleanArray>
 
 fun main() {
-    val br = BufferedReader(InputStreamReader(System.`in`))
-    val n = br.readLine().toInt()
-    heights = Array(n) { IntArray(n) }
+    n = readln().toInt()
+    map = Array(n) { IntArray(n) }
     visited = Array(n) { BooleanArray(n) }
 
     for (x in 0 until n) {
-        val row = br.readLine().split(" ").map { it.toInt() }
+        val line = readln().split(" ")
+            .map { it.toInt() }
+            .toIntArray()
+        map[x] = line
         for (y in 0 until n) {
-            heights[x][y] = row[y]
-            minHeight = minOf(minHeight, heights[x][y])
-            maxHeight = maxOf(maxHeight, heights[x][y])
+            minHeight = minOf(minHeight, map[x][y])
+            maxHeight = maxOf(maxHeight, map[x][y])
         }
     }
 
-    var safeAreaCount = 0
+    var safeArea = -100_000
     for (height in minHeight - 1..maxHeight) {
         var count = 0
         visited = Array(n) { BooleanArray(n) }
         for (x in 0 until n) {
             for (y in 0 until n) {
-                if (bfs(n, x, y, height)) {
+                if (bfs(x, y, height, visited)) {
                     count++
                 }
             }
         }
-        safeAreaCount = maxOf(safeAreaCount, count)
+        safeArea = maxOf(safeArea, count)
     }
-
-    println(safeAreaCount)
+    println(safeArea)
 }
 
 fun bfs(
-    n: Int,
-    startX: Int,
-    startY: Int,
+    x: Int,
+    y: Int,
     height: Int,
+    visited: Array<BooleanArray>,
 ): Boolean {
-    if (isUnder(startX, startY, height)) return false
-    val queue: Queue<Pair<Int, Int>> = LinkedList()
-    queue.add(Pair(startX, startY))
-    visited[startX][startY] = true
+    if (isInvalid(x, y, height)) {
+        return false
+    }
+    val queue = LinkedList<Pair<Int, Int>>()
+    queue.add(Pair(x, y))
+    visited[x][y] = true
 
     while (queue.isNotEmpty()) {
         val (x, y) = queue.poll()
         for (direction in directions) {
             val nextX = x + direction[0]
             val nextY = y + direction[1]
-            if (moveable(n, nextX, nextY, height)) {
-                visited[nextX][nextY] = true
+            if (moveable(nextX, nextY, height) && !visited[nextX][nextY]) {
                 queue.add(Pair(nextX, nextY))
+                visited[nextX][nextY] = true
             }
         }
     }
     return true
 }
 
-private fun moveable(
-    n: Int,
-    nextX: Int,
-    nextY: Int,
-    rainHeight: Int,
-) =
-    nextX in 0 until n && nextY in 0 until n && !visited[nextX][nextY] && heights[nextX][nextY] > rainHeight
-
-private fun isUnder(
+fun moveable(
     x: Int,
     y: Int,
-    rainHeight: Int,
-) = visited[x][y] || heights[x][y] <= rainHeight
+    height: Int,
+): Boolean {
+    return x in 0 until n && y in 0 until n && map[x][y] > height
+}
+
+fun isInvalid(
+    x: Int,
+    y: Int,
+    height: Int,
+): Boolean {
+    return visited[x][y] || map[x][y] <= height
+}
