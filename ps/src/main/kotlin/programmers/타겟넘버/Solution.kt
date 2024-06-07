@@ -1,30 +1,30 @@
 package programmers.타겟넘버
 
-import java.util.*
+import java.util.LinkedList
 
 class Solution {
     private val queue = LinkedList<Number>()
 
     fun solution(
         numbers: IntArray,
-        target: Int
+        target: Int,
     ): Int {
         var answer = 0
-        val size = numbers.size
 
         queue.add(Number(0, 0))
         while (queue.isNotEmpty()) {
             val number = queue.poll()
-            if (number.order > size) {
+            if (number.order > numbers.size) {
                 continue
             }
-            if (number.order == size) {
+
+            if (number.order == numbers.size) {
                 if (number.value == target) {
                     answer++
                 }
             } else {
-                queue.add(Number(number.value + numbers[number.order], number.nextOrder()))
-                queue.add(Number(number.value - numbers[number.order], number.nextOrder()))
+                queue.add(Number(number.nextValue(numbers[number.order]), number.nextOrder()))
+                queue.add(Number(number.nextValue(-numbers[number.order]), number.nextOrder()))
             }
         }
         return answer
@@ -33,8 +33,12 @@ class Solution {
 
 data class Number(
     val value: Int,
-    val order: Int
+    val order: Int,
 ) {
+    fun nextValue(nextValue: Int): Int {
+        return value + nextValue
+    }
+
     fun nextOrder(): Int {
         return order + 1
     }
