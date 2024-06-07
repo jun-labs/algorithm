@@ -6,12 +6,12 @@ class Solution {
 
     fun solution(
         n: Int,
-        computers: Array<IntArray>
+        computers: Array<IntArray>,
     ): Int {
-        var answer = 0
         visited = Array(n) { false }
         this.computers = computers
 
+        var answer = 0
         for (node in 0 until n) {
             if (!visited[node]) {
                 dfs(node)
@@ -23,12 +23,13 @@ class Solution {
 
     private fun dfs(node: Int) {
         visited[node] = true
-        for (next in 0 until visited.size) {
+        for (next in visited.indices) {
+            if (node == next) {
+                continue
+            }
             if (!visited[next] && computers[node][next] > 0) {
-                visited[next] = true
                 dfs(next)
             }
         }
     }
 }
-
