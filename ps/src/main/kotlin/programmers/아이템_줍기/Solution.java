@@ -5,78 +5,87 @@ import java.util.Queue;
 
 class Solution {
 
-    private static final int EDGE = 1;
     private final int[][] map = new int[102][102];
     private final int[] dx = {0, 0, 1, -1};
     private final int[] dy = {1, -1, 0, 0};
 
     public int solution(
-        int[][] rectangle,
+        int[][] rectangles,
         int currentX,
         int currentY,
         int itemX,
         int itemY
     ) {
-        currentX *= 2;
-        currentY *= 2;
-        itemX *= 2;
-        itemY *= 2;
-
-        for (int[] rec : rectangle) {
-            for (int index = 0; index < rec.length; index++) {
-                rec[index] *= 2;
+        for (int[] rectangle : rectangles) {
+            for (int index = 0; index < rectangle.length; index++) {
+                rectangle[index] *= 2;
             }
-            for (int x = rec[0]; x <= rec[2]; x++) {
-                for (int y = rec[1]; y <= rec[3]; y++) {
-                    map[x][y] = 1;
+            for (int row = rectangle[1]; row <= rectangle[3]; row++) {
+                for (int column = rectangle[0]; column <= rectangle[2]; column++) {
+                    map[row][column] = 1;
                 }
             }
         }
 
-        for (int[] rec : rectangle) {
-            for (int x = rec[0] + 1; x < rec[2]; x++) {
-                for (int y = rec[1] + 1; y < rec[3]; y++) {
-                    map[x][y] = 0;
+        for (int[] rectangle : rectangles) {
+            for (int row = rectangle[1] + 1; row < rectangle[3]; row++) {
+                for (int column = rectangle[0] + 1; column < rectangle[2]; column++) {
+                    map[row][column] = 0;
                 }
             }
         }
+
+        int x = currentY * 2;
+        int y = currentX * 2;
+        int targetX = itemY * 2;
+        int targetY = itemX * 2;
 
         Queue<Point> queue = new LinkedList<>();
-        queue.offer(new Point(currentX, currentY));
-        map[currentX][currentY] = 1;
+        queue.add(new Point(x, y, 0));
+        map[x][y] = 1;
 
         while (!queue.isEmpty()) {
             Point point = queue.poll();
-            int x = point.x;
-            int y = point.y;
+            int xPosition = point.x;
+            int yPosition = point.y;
 
-            if (x == itemX && y == itemY) {
+            if (point.arrive(targetX, targetY)) {
                 break;
             }
 
-            for (int index = 0; index < 4; index++) {
-                int nextX = x + dx[index];
-                int nextY = y + dy[index];
-
-                if (map[nextX][nextY] == EDGE) {
-                    queue.offer(new Point(nextX, nextY));
-                    map[nextX][nextY] = map[x][y] + 1;
+            for (int direction = 0; direction < 4; direction++) {
+                int nextX = xPosition + dx[direction];
+                int nextY = yPosition + dy[direction];
+                if (map[nextX][nextY] == 1) {
+                    queue.add(new Point(nextX, nextY, point.count + 1));
+                    map[nextX][nextY] = map[xPosition][yPosition] + 1;
                 }
             }
         }
-        return map[itemX][itemY] / 2;
+        return map[targetX][targetY] / 2;
     }
 
     static class Point {
         int x;
         int y;
+        int count;
 
         public Point(
             int x,
-            int y
+            int y,
+            int count
         ) {
             this.x = x;
             this.y = y;
+            this.count = count;
+        }
+
+        public boolean arrive(
+            int x,
+            int y
+        ) {
+            return this.x == x
+                & this.y == y;
         }
     }
 }
