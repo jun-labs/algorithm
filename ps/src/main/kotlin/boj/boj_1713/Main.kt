@@ -10,21 +10,23 @@ fun main() {
     var time = 0
 
     for (student in students) {
-        val existing = frames.find { it.student == student }
-        if (existing != null) {
-            existing.votes += 1
+        time++
+        val findStudent = frames.find { it.student == student }
+        if (findStudent != null) {
+            findStudent.votes++
         } else {
             if (frames.size < n) {
-                frames.add(Candidate(student, 1, time++))
+                frames.add(Candidate(student, 1, time))
             } else {
                 frames.sortWith(compareBy({ it.votes }, { it.time }))
                 frames.removeAt(0)
-                frames.add(Candidate(student, 1, time++))
+                frames.add(Candidate(student, 1, time))
             }
         }
     }
 
-    val result = frames.map { it.student }.sorted()
+    val result = frames.map { it.student }
+        .sorted()
     println(result.joinToString(" "))
 }
 
