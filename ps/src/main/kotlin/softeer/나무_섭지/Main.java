@@ -1,93 +1,82 @@
 package softeer.나무_섭지;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class Main {
-    private static int n;
-    private static int m;
-    private static char[][] map;
-    private static int[][] nMap;
-    private static int[][] gMap;
-    private static final int INF = 100_000_000;
     private static final int[] dx = {0, 0, 1, -1};
     private static final int[] dy = {1, -1, 0, 0};
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int[] input = Arrays.stream(br.readLine().split(" "))
-            .mapToInt(Integer::parseInt)
-            .toArray();
 
-        n = input[0];
-        m = input[1];
+        String[] input = br.readLine().split(" ");
+        int n = Integer.parseInt(input[0]);
+        int m = Integer.parseInt(input[1]);
 
-        map = new char[n][m];
-        nMap = new int[n][m];
-        gMap = new int[n][m];
+        char[][] map = new char[n][m];
 
-        for (int[] arr : nMap) {
-            Arrays.fill(arr, INF);
-        }
-        for (int[] arr : gMap) {
-            Arrays.fill(arr, INF);
-        }
-
-        Point source = null;
-        Point target = null;
+        Point start = new Point(-1, -1);
+        Point exit = new Point(-1, -1);
         List<Point> ghosts = new ArrayList<>();
+
         for (int x = 0; x < n; x++) {
-            map[x] = br.readLine().toCharArray();
+            String line = br.readLine();
             for (int y = 0; y < m; y++) {
+                map[x][y] = line.charAt(y);
                 if (map[x][y] == 'N') {
-                    source = new Point(x, y);
-                    nMap[x][y] = 0;
-                } else if (map[x][y] == 'G') {
-                    ghosts.add(new Point(x, y));
+                    start = new Point(x, y);
                 } else if (map[x][y] == 'D') {
-                    target = new Point(x, y);
+                    exit = new Point(x, y);
+                }
+                if (map[x][y] == 'G') {
+                    ghosts.add(new Point(x, y));
                 }
             }
         }
 
-        int minDistance = bfs(source, target, nMap, false);
-        if (minDistance == -1) {
+        int namooDistance = bfs(map, start, exit, n, m, false);
+        if (namooDistance == -1) {
             System.out.println("No");
-            System.exit(0);
+            return;
         }
 
-        Point targetGhost = null;
-        int targetDistance = 100_000;
+        Point targetGhost = new Point(-1, -1);
+        int minGhostDistance = 100_000;
         for (Point ghost : ghosts) {
-            int distance = Math.abs(ghost.x - target.x) + Math.abs(ghost.y - target.y);
-            if (distance < minDistance) {
-                targetDistance = distance;
+            int distance = Math.abs(ghost.x - exit.x) + Math.abs(ghost.y - exit.y);
+            if (distance < minGhostDistance) {
+                minGhostDistance = distance;
                 targetGhost = ghost;
             }
         }
 
-        if (targetGhost != null) {
-            gMap[targetGhost.x][targetGhost.y] = 0;
-            bfs(targetGhost, target, gMap, true);
+        int ghostDistance = bfs(map, targetGhost, exit, n, m, true);
+        if (ghostDistance <= namooDistance) {
+            System.out.println("No");
+        } else {
+            System.out.println("Yes");
         }
-
-        boolean canEscape = nMap[target.x][target.y] < gMap[target.x][target.y];
-        System.out.println(canEscape ? "Yes" : "No");
+        br.close();
     }
 
     private static int bfs(
+        char[][] map,
         Point source,
         Point target,
-        int[][] distance,
-        boolean ghost
+        int n,
+        int m,
+        boolean isGhost
     ) {
-        Queue<Point> queue = new ArrayDeque<>();
-        queue.offer(source);
+        boolean[][] visited = new boolean[n][m];
+        Queue<Point> queue = new LinkedList<>();
+        queue.add(source);
+        visited[source.x][source.y] = true;
 
         while (!queue.isEmpty()) {
             Point point = queue.poll();
@@ -97,14 +86,10 @@ public class Main {
             for (int direction = 0; direction < 4; direction++) {
                 int nextX = point.x + dx[direction];
                 int nextY = point.y + dy[direction];
-
-                if (moveable(nextX, nextY)) {
-                    if (map[nextX][nextY] != '#' || ghost) {
-                        int nextDist = distance[point.x][point.y] + 1;
-                        if (nextDist < distance[nextX][nextY]) {
-                            distance[nextX][nextY] = nextDist;
-                            queue.offer(new Point(nextX, nextY, point.distance + 1));
-                        }
+                if (moveable(nextX, nextY, n, m)) {
+                    if ((map[nextX][nextY] != '#' || isGhost) && !visited[nextX][nextY]) {
+                        visited[nextX][nextY] = true;
+                        queue.add(new Point(nextX, nextY, point.distance + 1));
                     }
                 }
             }
@@ -113,34 +98,29 @@ public class Main {
     }
 
     private static boolean moveable(
-        int x,
-        int y
+        int nextX,
+        int nextY,
+        int n,
+        int m
     ) {
-        return x >= 0
-            && x < n
-            && y >= 0
-            && y < m;
+        return nextX >= 0
+            && nextX < n
+            && nextY >= 0
+            && nextY < m;
     }
 
     static class Point {
-        private final int x;
-        private final int y;
-        private final int distance;
+        int x;
+        int y;
+        int distance;
 
-        Point(
-            int x,
-            int y
-        ) {
+        public Point(int x, int y) {
             this.x = x;
             this.y = y;
             this.distance = 0;
         }
 
-        public Point(
-            int x,
-            int y,
-            int distance
-        ) {
+        public Point(int x, int y, int distance) {
             this.x = x;
             this.y = y;
             this.distance = distance;
