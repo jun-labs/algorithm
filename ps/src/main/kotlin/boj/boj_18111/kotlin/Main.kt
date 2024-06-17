@@ -1,4 +1,4 @@
-package boj.boj_18111
+package boj.boj_18111.kotlin
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
