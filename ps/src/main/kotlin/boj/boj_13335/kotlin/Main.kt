@@ -1,4 +1,4 @@
-package boj.boj_13335
+package boj.boj_13335.kotlin
 
 import java.util.LinkedList
 import java.util.Queue
