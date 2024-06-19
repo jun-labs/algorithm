@@ -3,62 +3,50 @@ package boj.boj_1325
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-lateinit var relationship: MutableList<MutableList<Int>>
-lateinit var visit: BooleanArray
-lateinit var counts: IntArray
+private lateinit var relation: MutableList<MutableList<Int>>
+private lateinit var visited: BooleanArray
+private lateinit var counts: IntArray
+
 fun main() {
     val br = BufferedReader(InputStreamReader(System.`in`))
+    val (n, m) = br.readLine().split(" ")
+        .map { it.toInt() }
 
-    val (n, m) = br.readLine().split(" ").map { it.toInt() }
-
-    var max = -1
-    relationship = MutableList(n + 1) { mutableListOf() }
-    visit = BooleanArray(n + 1)
+    relation = MutableList(n + 1) { mutableListOf() }
+    visited = BooleanArray(n + 1)
     counts = IntArray(n + 1)
 
     repeat(m) {
-        val (s, e) = br.readLine().split(" ")
+        val (nodeA, nodeB) = br.readLine().split(" ")
             .map { it.toInt() }
-        relationship[s].add(e)
+        relation[nodeB].add(nodeA)
     }
 
     for (node in 1..n) {
-        visit.fill(false)
-        visit[0] = true
-        dfs(node, visit, counts)
+        visited.fill(false)
+        counts[node] = dfs(node, node)
     }
 
-    for (idx in 1..n) {
-        if (max < counts[idx]) {
-            max = counts[idx]
-        }
-    }
-
+    val max = counts.maxOrNull() ?: -1
     val sb = StringBuilder()
-    for (idx in 1..n) {
-        if (max == counts[idx]) {
-            if (idx != n) {
-                sb.append(idx)
-                    .append(" ")
-            } else {
-                sb.append(idx)
-            }
+    for (node in 1..n) {
+        if (counts[node] == max) {
+            sb.append(node).append(" ")
         }
     }
-    println(sb)
+    println(sb.toString().trim())
 }
 
 fun dfs(
-    node: Int,
-    visit: BooleanArray,
-    count: IntArray,
-) {
-    visit[node] = true
-
-    for (next in relationship[node]) {
-        if (!visit[next]) {
-            count[next]++
-            dfs(next, visit, count)
+    source: Int,
+    target: Int,
+): Int {
+    visited[target] = true
+    var count = 1
+    for (next in relation[target]) {
+        if (!visited[next]) {
+            count += dfs(source, next)
         }
     }
+    return count
 }
