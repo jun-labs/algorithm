@@ -1,7 +1,10 @@
 package boj.boj_5014;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -19,6 +22,7 @@ public class Main {
         }
 
         boolean[] visited = new boolean[f + 1];
+        visited[s] = true;
         Queue<Floor> queue = new LinkedList<>();
         queue.add(new Floor(s, 0));
 
@@ -31,14 +35,14 @@ public class Main {
 
             int nextUp = floor.position + u;
             if (nextUp <= f && !visited[nextUp]) {
-                queue.add(new Floor(nextUp, floor.count + 1));
                 visited[nextUp] = true;
+                queue.add(new Floor(nextUp, floor.count + 1));
             }
 
             int nextDown = floor.position - d;
             if (nextDown >= 1 && !visited[nextDown]) {
-                queue.add(new Floor(nextDown, floor.count + 1));
                 visited[nextDown] = true;
+                queue.add(new Floor(nextDown, floor.count + 1));
             }
         }
         System.out.println("use the stairs");
