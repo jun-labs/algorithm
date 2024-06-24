@@ -83,16 +83,16 @@ public class Main {
         }
     }
 
-    static boolean moveable(int x, int y) {
+    private static boolean moveable(int x, int y) {
         return x >= 0
             && x < n
             && y >= 0
             && y < n;
     }
 
-    static Input input = new Input();
+    private static Input input = new Input();
 
-    static class Input {
+    private static class Input {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer("");
 
