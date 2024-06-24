@@ -7,6 +7,8 @@
 Problem Solving.
 
 [![Release](https://img.shields.io/badge/-%20Programmers-blue)](https://programmers.co.kr/)
-[![Release](https://img.shields.io/badge/-%20BaekJoon-white)](https://www.acmicpc.net/) [![Release](https://img.shields.io/badge/-%20LeetCode-lightgrey)](https://leetcode.com/)
+[![Release](https://img.shields.io/badge/-%20BaekJoon-white)](https://www.acmicpc.net/) 
+[![Release](https://img.shields.io/badge/-%20LeetCode-lightgrey)](https://leetcode.com/) <br/>
+[![Release](https://img.shields.io/badge/-%20Softeer-brightblue)](https://softeer.ai/practice)
 
 </div>
