@@ -70,8 +70,8 @@ public class Main {
         int y = point.y;
         visited[x][y] = true;
         for (int direction = 0; direction < 4; direction++) {
-            int nextX = x + dy[direction];
-            int nextY = y + dx[direction];
+            int nextX = x + dx[direction];
+            int nextY = y + dy[direction];
             if (!moveable(nextX, nextY)) {
                 continue;
             }
