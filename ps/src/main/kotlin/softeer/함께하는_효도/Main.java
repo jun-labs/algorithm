@@ -31,20 +31,20 @@ public class Main {
 
         int sum = 0;
         for (int index = 0; index < m; index++) {
-            String[] line = br.readLine().split(" ");
-            int x = Integer.parseInt(line[0]);
-            int y = Integer.parseInt(line[1]);
-            friends.add(new Point(x, y));
+            String[] start = br.readLine().split(" ");
+            int x = Integer.parseInt(start[0]);
+            int y = Integer.parseInt(start[1]);
             sum += map[x][y];
             map[x][y] = 0;
+            friends.add(new Point(x, y));
         }
 
-        Point friend = friends.get(0);
-        dfs(0, 0, friend.x, friend.y, sum);
+        Point start = friends.get(0);
+        dfs(0, 0, start.x, start.y, sum);
         System.out.println(answer);
     }
 
-    static void dfs(
+    private static void dfs(
         int idx,
         int time,
         int x,
@@ -56,8 +56,8 @@ public class Main {
         }
         answer = Math.max(answer, sum);
         if (time == 3 && (idx + 1) < m) {
-            Point point = friends.get(idx + 1);
-            dfs(idx + 1, 0, point.x, point.y, sum);
+            Point next = friends.get(idx + 1);
+            dfs(idx + 1, 0, next.x, next.y, sum);
         } else {
             for (int direction = 0; direction < 4; direction++) {
                 int nextX = x + dx[direction];
