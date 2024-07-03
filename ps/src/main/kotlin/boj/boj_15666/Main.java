@@ -24,7 +24,6 @@ public class Main {
             .distinct()
             .sorted()
             .toArray();
-
         dfs(new ArrayList<>(), 0, 0);
         System.out.println(sb);
     }
