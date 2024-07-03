@@ -25,6 +25,9 @@ public class Solution {
 
         for (int x = 0; x < row; x++) {
             for (int y = 0; y < column; y++) {
+                if (land[x][y] == 0) {
+                    visited[x][y] = true;
+                }
                 if (land[x][y] == 1 && !visited[x][y]) {
                     int size = bfs(x, y, oilId);
                     oilMap.put(oilId, size);
@@ -49,30 +52,30 @@ public class Solution {
     }
 
     private int bfs(
-        int startX,
-        int startY,
+        int x,
+        int y,
         int oilId
     ) {
-        Queue<Point> queue = new LinkedList<>();
-        queue.add(new Point(startX, startY));
-        visited[startX][startY] = true;
-        land[startX][startY] = oilId;
-
         int count = 1;
+        visited[x][y] = true;
+        land[x][y] = oilId;
+        Queue<Point> queue = new LinkedList<>();
+        queue.add(new Point(x, y));
         while (!queue.isEmpty()) {
             Point point = queue.poll();
             for (int direction = 0; direction < 4; direction++) {
                 int nextX = point.x + dx[direction];
                 int nextY = point.y + dy[direction];
                 if (isMovable(nextX, nextY)) {
-                    queue.add(new Point(nextX, nextY));
-                    visited[nextX][nextY] = true;
                     land[nextX][nextY] = oilId;
+                    visited[nextX][nextY] = true;
                     count++;
+                    queue.add(new Point(nextX, nextY));
                 }
             }
         }
         return count;
+
     }
 
     private boolean isMovable(
