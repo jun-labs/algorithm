@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         for (int number = 0; number < 10; number++) {
-            addNumber(number, 1);
+            dfs(number, 1);
         }
         Collections.sort(numbers);
         int index = Integer.parseInt(br.readLine());
@@ -24,11 +24,11 @@ public class Main {
         System.out.println(numbers.get(index));
     }
 
-    private static void addNumber(
+    private static void dfs(
         long number,
-        int count
+        int digit
     ) {
-        if (count > 10) {
+        if (digit > 10) {
             return;
         }
         if (!numbers.contains(number)) {
@@ -36,7 +36,7 @@ public class Main {
         }
         for (int index = 0; index < 10; index++) {
             if (number % 10 > index) {
-                addNumber(number * 10 + index, count + 1);
+                dfs(number * 10 + index, digit + 1);
             }
         }
     }
