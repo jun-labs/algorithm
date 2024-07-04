@@ -51,17 +51,20 @@ public class Main {
             return;
         }
         answer = Math.max(answer, count);
-
-        for (int start = node; start <= n; start++) {
-            for (int friend : friends[start]) {
-                if (!visited[start] && !visited[friend]) {
-                    visited[start] = true;
+        if (visited[node]) {
+            dfs(node + 1, count);
+        } else {
+            visited[node] = true;
+            List<Integer> linkedFriends = friends[node];
+            for (int friend : linkedFriends) {
+                if (!visited[friend]) {
                     visited[friend] = true;
-                    dfs(start, count + 2);
-                    visited[start] = false;
+                    dfs(node + 1, count + 2);
                     visited[friend] = false;
                 }
             }
+            visited[node] = false;
+            dfs(node + 1, count);
         }
     }
 }
