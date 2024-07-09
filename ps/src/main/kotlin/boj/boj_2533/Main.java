@@ -40,6 +40,7 @@ public class Main {
         visited[node] = true;
         dp[node][0] = 0;
         dp[node][1] = 1;
+
         for (int child : nodes[node]) {
             if (!visited[child]) {
                 dfs(child);
