@@ -1,6 +1,8 @@
 package programmers.디펜스_게임
 
-import java.util.*
+import java.util.Collections
+import java.util.PriorityQueue
+import java.util.Queue
 
 class Solution {
     private val queue: Queue<Int> = PriorityQueue(Collections.reverseOrder())
@@ -8,17 +10,16 @@ class Solution {
     fun solution(
         n: Int,
         k: Int,
-        enemy: IntArray
+        enemy: IntArray,
     ): Int {
         var life = n
-        var lifeTicket = k
-
+        var defenceTicket = k
         for ((turn, value) in enemy.withIndex()) {
             queue.add(value)
             life -= value
             if (life < 0) {
-                if (lifeTicket >= 1 && queue.isNotEmpty()) {
-                    lifeTicket -= 1
+                if (defenceTicket >= 1) {
+                    defenceTicket -= 1
                     life += queue.poll()
                 } else {
                     return turn
@@ -27,12 +28,4 @@ class Solution {
         }
         return enemy.size
     }
-}
-
-fun main() {
-    val n = 7
-    val k = 3
-    val enemy = intArrayOf(4, 2, 4, 5, 3, 3, 1)
-    val solution = Solution()
-    println(solution.solution(n, k, enemy))
 }
