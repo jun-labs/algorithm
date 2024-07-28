@@ -3,30 +3,31 @@ package programmers.N으로_표현.kotlin
 class Solution {
     fun solution(
         N: Int,
-        number: Int
+        number: Int,
     ): Int {
         if (N == number) {
             return 1
         }
-
+        // Number를 n번 사용해 만들 수 있는 모든 숫자의 집합.
         val dp = Array<MutableSet<Int>>(9) { mutableSetOf() }
-        for (idx in 1 until 9) {
-            dp[idx].add("$N".repeat(idx).toInt())
-            for (otherIdx in 1 until idx) {
-                for (element in dp[otherIdx]) {
-                    for (otherElement in dp[idx - otherIdx]) {
-                        dp[idx].add(element + otherElement)
-                        dp[idx].add(element - otherElement)
-                        dp[idx].add(element * otherElement)
-                        if (otherElement > 0) {
-                            dp[idx].add(element / otherElement)
+        for (i in 1 until 9) {
+            val value = N.toString().repeat(i).toInt()
+            dp[i].add(value)
+            for (j in 1 until i) {
+                for (iElement in dp[j]) {
+                    for (jElement in dp[i - j]) {
+                        dp[i].add(iElement + jElement)
+                        dp[i].add(iElement - jElement)
+                        dp[i].add(iElement * jElement)
+                        if (jElement > 0) {
+                            dp[i].add(iElement / jElement)
                         }
                     }
                 }
             }
-            for (target in dp[idx]) {
-                if (number == target) {
-                    return idx
+            for (target in dp[i]) {
+                if (target == number) {
+                    return i
                 }
             }
         }
