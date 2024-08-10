@@ -12,11 +12,10 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int n;
-    static int[][] sea;
-    static boolean[][] visited;
-    static int[] dx = {0, 0, 1, -1};
-    static int[] dy = {1, -1, 0, 0};
+    private static int n;
+    private static int[][] sea;
+    private static final int[] dx = {0, 0, 1, -1};
+    private static final int[] dy = {1, -1, 0, 0};
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -29,56 +28,57 @@ public class Main {
             for (int y = 0; y < n; y++) {
                 sea[x][y] = Integer.parseInt(st.nextToken());
                 if (sea[x][y] == 9) {
-                    shark = new Shark(x, y, 2);
+                    shark = new Shark(x, y, 2, 0);
                     sea[x][y] = 0;
                 }
             }
         }
-        System.out.println(getTime(shark));
+        System.out.println(getAnswer(shark));
     }
 
-    static int getTime(Shark shark) {
+    private static int getAnswer(Shark shark) {
         int answer = 0;
-        int size = 0;
+        int temp = 0;
+
         while (true) {
-            Fish fish = findFish(shark);
-            if (fish == null) {
+            Fish findFish = findFish(shark);
+            if (findFish == null) {
                 break;
             }
-
-            sea[fish.x][fish.y] = 0;
-            shark.x = fish.x;
-            shark.y = fish.y;
-            answer += fish.distance;
-
-            size++;
-            if (size == shark.size) {
+            sea[findFish.x][findFish.y] = 0;
+            shark.x = findFish.x;
+            shark.y = findFish.y;
+            answer += findFish.distance;
+            temp++;
+            if (temp == shark.size) {
                 shark.plusSize();
-                size = 0;
+                temp = 0;
             }
         }
         return answer;
     }
 
-    static Fish findFish(Shark shark) {
-        Queue<Shark> queue = new LinkedList<>();
+    private static Fish findFish(Shark shark) {
         List<Fish> fishes = new ArrayList<>();
-        visited = new boolean[n][n];
+        Queue<Shark> queue = new LinkedList<>();
+        queue.add(shark);
+        boolean[][] visited = new boolean[n][n];
         visited[shark.x][shark.y] = true;
-        queue.add(new Shark(shark.x, shark.y, shark.size, 0));
-
+        int startDistance = shark.distance;
         while (!queue.isEmpty()) {
-            Shark pollShark = queue.poll();
-
+            Shark polledShark = queue.poll();
             for (int direction = 0; direction < 4; direction++) {
-                int nextX = pollShark.x + dx[direction];
-                int nextY = pollShark.y + dy[direction];
-                if (moveable(nextX, nextY) && !visited[nextX][nextY]) {
+                int nextX = polledShark.x + dx[direction];
+                int nextY = polledShark.y + dy[direction];
+                if (!moveable(nextX, nextY)) {
+                    continue;
+                }
+                if (!visited[nextX][nextY]) {
                     visited[nextX][nextY] = true;
-                    if (sea[nextX][nextY] <= shark.size) {
-                        int distance = pollShark.distance + 1;
-                        queue.add(new Shark(nextX, nextY, pollShark.size, distance));
-                        if (sea[nextX][nextY] > 0 && sea[nextX][nextY] < shark.size) {
+                    if (sea[nextX][nextY] <= polledShark.size) {
+                        int distance = polledShark.distance - startDistance + 1;
+                        queue.add(new Shark(nextX, nextY, polledShark.size, distance));
+                        if (sea[nextX][nextY] > 0 && sea[nextX][nextY] < polledShark.size) {
                             fishes.add(new Fish(nextX, nextY, distance));
                         }
                     }
@@ -88,8 +88,8 @@ public class Main {
         return fishes.stream()
             .min(comparingInt((Fish fish) -> fish.distance)
                 .thenComparingInt(fish -> fish.x)
-                .thenComparingInt(fish -> fish.y))
-            .orElseGet(() -> null);
+                .thenComparingInt(fish -> fish.y)
+            ).orElse(null);
     }
 
     private static boolean moveable(
