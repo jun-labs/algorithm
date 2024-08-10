@@ -25,35 +25,33 @@ public class Main {
             }
         }
 
-        Shark shark = new Shark(0, 0, map[0][0].number, map[0][0].direction);
+        Fish firstFish = map[0][0];
+        Shark shark = new Shark(firstFish.x, firstFish.y, firstFish.number, firstFish.direction);
         map[0][0] = null;
-        dfs(shark, map, shark.size);
+        dfs(map, shark);
         System.out.println(answer);
     }
 
     private static void dfs(
-        Shark shark,
         Fish[][] map,
-        int score
+        Shark shark
     ) {
-        answer = Math.max(answer, score);
-        Fish[][] copyMap = copy(map);
+        answer = Math.max(answer, shark.size);
+        Fish[][] copyMap = copyMap(map);
         moveFishes(copyMap, shark);
 
-        for (int movement = 1; movement <= 3; movement++) {
-            int nextX = shark.x + dx[shark.direction] * movement;
-            int nextY = shark.y + dy[shark.direction] * movement;
-
+        for (int distance = 1; distance <= 3; distance++) {
+            int nextX = shark.x + dx[shark.direction] * distance;
+            int nextY = shark.y + dy[shark.direction] * distance;
             if (!moveable(nextX, nextY)) {
                 continue;
             }
-
             if (copyMap[nextX][nextY] != null) {
-                int newSize = score + copyMap[nextX][nextY].number;
-                Shark newShark = new Shark(nextX, nextY, newSize, copyMap[nextX][nextY].direction);
-                Fish[][] newMap = copy(copyMap);
+                Fish eatenFish = copyMap[nextX][nextY];
+                Shark nextShark = new Shark(nextX, nextY, shark.size + copyMap[nextX][nextY].number, eatenFish.direction);
+                Fish[][] newMap = copyMap(copyMap);
                 newMap[nextX][nextY] = null;
-                dfs(newShark, newMap, newSize);
+                dfs(newMap, nextShark);
             }
         }
     }
@@ -70,8 +68,8 @@ public class Main {
                 }
             }
         }
-        Collections.sort(fishes);
 
+        Collections.sort(fishes);
         for (Fish fish : fishes) {
             int tryCount = 0;
             while (tryCount < 8) {
@@ -99,6 +97,19 @@ public class Main {
         }
     }
 
+    private static Fish[][] copyMap(Fish[][] map) {
+        Fish[][] copyMap = new Fish[map.length][map[0].length];
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                if (map[x][y] != null) {
+                    Fish fish = new Fish(map[x][y].x, map[x][y].y, map[x][y].number, map[x][y].direction);
+                    copyMap[x][y] = fish;
+                }
+            }
+        }
+        return copyMap;
+    }
+
     private static boolean moveable(
         int x,
         int y
@@ -107,19 +118,6 @@ public class Main {
             && x < 4
             && y >= 0
             && y < 4;
-    }
-
-    private static Fish[][] copy(Fish[][] source) {
-        Fish[][] target = new Fish[4][4];
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
-                if (source[x][y] != null) {
-                    Fish fish = new Fish(source[x][y].x, source[x][y].y, source[x][y].number, source[x][y].direction);
-                    target[x][y] = fish;
-                }
-            }
-        }
-        return target;
     }
 
     static class Shark {
@@ -160,8 +158,8 @@ public class Main {
         }
 
         @Override
-        public int compareTo(Fish fish) {
-            return this.number - fish.number;
+        public int compareTo(Fish o) {
+            return this.number - o.number;
         }
     }
 }
