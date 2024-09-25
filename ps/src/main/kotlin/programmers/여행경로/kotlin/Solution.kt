@@ -1,4 +1,4 @@
-package programmers.여행경로
+package programmers.여행경로.kotlin
 
 class Solution {
     private lateinit var visited: BooleanArray
