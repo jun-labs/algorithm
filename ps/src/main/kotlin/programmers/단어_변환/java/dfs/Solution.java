@@ -1,8 +1,8 @@
-package programmers.단어_변환.java;
+package programmers.단어_변환.java.dfs;
 
 import java.util.Arrays;
 
-public class Solution {
+class Solution {
     private int answer = 100_000;
     private String[] words;
     private boolean[] visited;
@@ -15,7 +15,6 @@ public class Solution {
         if (!Arrays.asList(words).contains(target)) {
             return 0;
         }
-
         this.words = words;
         this.visited = new boolean[words.length];
         dfs(begin, target, 0);
@@ -23,17 +22,16 @@ public class Solution {
     }
 
     private void dfs(
-        String word,
-        String target,
-        int count
+        final String source,
+        final String target,
+        final int count
     ) {
-        if (word.equals(target)) {
+        if (source.equals(target)) {
             answer = Math.min(answer, count);
             return;
         }
-
         for (int index = 0; index < words.length; index++) {
-            if (!visited[index] && isDifferentOnlyOneCharacter(word, words[index])) {
+            if (!visited[index] && isOnlyOneDifference(source, words[index])) {
                 visited[index] = true;
                 dfs(words[index], target, count + 1);
                 visited[index] = false;
@@ -41,13 +39,13 @@ public class Solution {
         }
     }
 
-    private boolean isDifferentOnlyOneCharacter(
-        String wordA,
-        String wordB
+    private boolean isOnlyOneDifference(
+        final String source,
+        final String target
     ) {
         int count = 0;
-        for (int index = 0; index < wordA.length(); index++) {
-            if (wordA.charAt(index) != wordB.charAt(index)) {
+        for (int index = 0; index < source.length(); index++) {
+            if (source.charAt(index) != target.charAt(index)) {
                 count++;
             }
             if (count > 1) {
